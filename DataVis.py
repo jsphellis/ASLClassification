@@ -107,9 +107,6 @@ class DataVisualization:
     Takes in a folder of images, predicts the labels corresponding with images, and produces a string of predicted labels
     '''
     def predFolder(self, folder_path):
-        # import matplotlib.pyplot as plt
-        # from tensorflow.keras.preprocessing.image import img_to_array, load_img
-        # import numpy as np
 
         predictions = []
         file_names = sorted(os.listdir(folder_path))
@@ -119,11 +116,11 @@ class DataVisualization:
             img_path = os.path.join(folder_path, file_name)
             
             img = load_img(img_path, target_size=(224, 224))
-            images.append(img)  # Append the PIL image to the list
+            images.append(img)
             img_array = img_to_array(img)
             img_array = np.expand_dims(img_array, axis=0) / 255.0
 
-            pred = self.model.predict(img_array)
+            pred = self.model.predict(img_array, verbose=0)
             pred_class = np.argmax(pred, axis=1)
 
             index_to_label_map = {v: k for k, v in self.train_dataset.class_indices.items()}
@@ -167,7 +164,7 @@ class DataVisualization:
         heatmap = np.zeros((image.shape[0], image.shape[1]), np.float32)
         for x, y, occluded_image in self.iterOcclusion(image, size=size):
 
-            preds = model.predict(np.expand_dims(occluded_image, axis=0))
+            preds = model.predict(np.expand_dims(occluded_image, axis=0), verbose=0)
            
             heatmap[y:y+size, x:x+size] = preds[0][correct_class]
         plt.figure(figsize=(8, 8)) 
